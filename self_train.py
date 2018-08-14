@@ -17,7 +17,7 @@ LX, LY = load_sup(folder)
 train_size = (int)(4*len(LX)/5)
 Xval = LX[train_size+1000:]
 Yval = LY[train_size+1000:]
-train_size = (int)(train_size/8)
+train_size = (int)(train_size/2)
 Xtrain = LX[:train_size]
 Ytrain = LY[:train_size]
 ##XU = np.r_[XU, Xval]
@@ -109,8 +109,8 @@ datagen.fit(Xtrain)
 
 #model = newModel2()
 
-#model.save('my_model3.h5')
-model = load_model('my_model.h5')
+#model.save('model2_1000_drop_kernal_init.h5')
+model = load_model('model2_1000_drop_kernal_init.h5')
 print(model.count_params())
 epochs = 5000
 batch_size = 128
@@ -118,16 +118,25 @@ print(len(Xtrain) / batch_size)
 #for i in range(100):
     #print('Epoch:' + i)
 earlyStopping=EarlyStopping(monitor='val_loss', patience=3, min_delta=10**-3, mode='auto')
-checkPoint = ModelCheckpoint('my_model.h5', monitor='val_loss', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=5)
+checkPoint = ModelCheckpoint('model2_4000_drop_kernal_init.h5', monitor='val_loss', verbose=0, save_best_only=True, save_weights_only=False, mode='auto', period=5)
 #model.fit(Xtrain, Ytrain, batch_size=batch_size, epochs=epochs, validation_data=(Xval, Yval), verbose = 2)
 model.fit_generator(datagen.flow(Xtrain, Ytrain, batch_size=batch_size),
                         steps_per_epoch=len(Xtrain) / batch_size, epochs=epochs, validation_data=(Xval, Yval), verbose = 2, callbacks = [checkPoint])
-model.save('my_model.h5')
+model.save('model2_4000_drop_kernal_init.h5')
 #
 '''
 for i in range(10):
     model.fit(Xtrain, Ytrain, epochs=10, batch_size=256)
     model.save('my_model3.h5')
 '''
+#model2_1000_no_drop: in acc hit 0.9 after 115 epochs 0.99 after 140 0.999 after 160 1 after 160 valid acc about 0.4
+#model2_1000_no_drop_kernal_init: in acc hit 0.9 after 103 epochs 0.99 after 140 0.999 after 160 1 after 160 valid acc about 0.4
+#model2_1000_drop_kernal_init: in train acc about 0.87 valid acc about 0.39
+#model2_4000_drop_kernal_init: in train acc about 0.87 valid acc about 0.39
+##model3_no_drop_4000_kernal_init: in acc hit 0.9 after 160 epochs valid acc about 0.48
+#model2_no_drop_4000_kernal_init: in acc hit 0.98 after 160 epochs valid acc about 0.49
+#model2_1000_drop2_kernal_init: in train acc about 0.99 valid acc about 0.43
+#model2_4000_drop2_kernal_init: in train acc about 0.92 valid acc about 0.54
+#model3_4000_no_drop_kernal_init: in train acc about 0.93 valid acc about 0.52
 print(model.count_params())
-model.save('my_model.h5')
+model.save('model2_4000_drop.h5')
